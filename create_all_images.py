@@ -177,7 +177,7 @@ def get_all_fieldtrials():
 '''
 Create numpy arrays for plotly script. Matrix of raw values and matrix of accession 
 '''
-def numpy_data(json, pheno, current_name):
+def numpy_data(json, pheno, current_name, total_rows, total_columns):
 
     traitName = searchPhenotypeTrait(pheno, current_name)
     unit      = searchPhenotypeUnit( pheno, current_name)
@@ -272,7 +272,7 @@ def numpy_data(json, pheno, current_name):
 
             row+=1
             column=2
-            # columns = json[j]['column_index']
+            columns = json[j]['column_index']
 
 
     #column = columns # use actual number of columns instead of counter
@@ -284,6 +284,10 @@ def numpy_data(json, pheno, current_name):
     #######print("number of plots and shape check", len(json), row, column, row*(column) )
     if (len(json) != row*column):
         #print("NOT rectangular")
+        if(total_columns!=None):
+          if(column<total_columns):
+             column=total_columns
+
         # fit odd shape plot into bigger rectangular plot.
         row_raw  = oddShapeValues(   json, row, column, current_name)
         #row_acc  = oddShapeAccession(json, row, column, current_name)
@@ -462,8 +466,8 @@ for i in range(len(all_studies['results'][0]['results'])):
 
 #studies_ids.remove('6054df3a02700f065c6fcc58') #DFW TKNIL Set 1 JIC-Morley, Harvest 2016. add exception
 
-studies_ids.remove('619e0cf787a2793484741458') #   DFW Zinc NAM RRes, Harvest 2019
-studies_ids.remove('619e0d970598733f093a0085') #   DFW Zinc NAM Brooms Barn, Harvest 2019 ERROR due rows: [ ]
+##studies_ids.remove('619e0cf787a2793484741458') #   DFW Zinc NAM RRes, Harvest 2019
+##studies_ids.remove('619e0d970598733f093a0085') #   DFW Zinc NAM Brooms Barn, Harvest 2019 ERROR due rows: [ ]
 
 
 studies_ids.remove('619e159b87a279348474145b') # DFW Academic Toolkit RRes, Harvest 2021   
@@ -495,6 +499,9 @@ for j in range(len(studies_ids)):
     dictTraits = dict_phenotypes(phenotypes, plot_data)  #create dictionary of phenotypes.
     default    = list(dictTraits.keys())[0]              #use first one as default. 
 
+    total_rows = study_json['results'][0]['results'][0]['data']['num_rows']
+    total_columns = study_json['results'][0]['results'][0]['data']['num_columns']
+
     phenoList   = list(dictTraits.keys()) 
 	
     print(name)
@@ -510,7 +517,7 @@ for j in range(len(studies_ids)):
     for k in range(len(phenoList)):
         selected_phenotype = phenoList[k]
         ###print(selected_phenotype)
-        matrices  = numpy_data(plot_data, phenotypes, selected_phenotype)
+        matrices  = numpy_data(plot_data, phenotypes, selected_phenotype, total_rows, total_columns)
 
         row     = matrices[0]
         column  = matrices[1]
