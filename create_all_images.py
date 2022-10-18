@@ -112,32 +112,6 @@ def get_plot(id):
     return json.dumps(res.json())
 
 ####################################################################
-def get_plots():
-    plot_request = {
-            "services": [{
-                "so:name": "Search Field Trials",
-                "start_service": True,
-                "parameter_set": {
-                    "level": "advanced",
-                    "parameters": [{
-                        "param": "ST Id",
-                        "current_value": ""
-                    }, {
-                        "param": "Get all Plots for Study",
-                        "current_value": True
-                    }, {
-                        "param": "ST Search Studies",
-                        "current_value": True
-                    }]
-                }
-            }]
-        }
-    res = requests.post(server_url, data=json.dumps(plot_request))
-    return json.dumps(res.json())
-
-
-
-####################################################################
 def get_all_fieldtrials():
     list_all_ft_request = {
         "services": [
